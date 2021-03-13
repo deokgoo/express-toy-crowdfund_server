@@ -4,7 +4,8 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import ExpressCore from 'express-serve-static-core';
-import AccountController from './controllers/AccountController';
+import PrivateAccountController from './controllers/PrivateAccountController';
+import PublicAccountController from './controllers/PublicAccountController';
 
 class App {
   private app: ExpressCore.Express;
@@ -14,14 +15,18 @@ class App {
     this.app = express();
     this.port = process.env.PORT??80;
     this.useExpress();
+    this.setController();
   }
   useExpress() {
-    this.app.use(morgan('combined'));
-    this.app.use(cors);
-    this.app.use(bodyParser);
+    this.app.use(morgan('dev'));
+    this.app.use(cors());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json());
   }
   setController() {
-    this.app.use(AccountController);
+    this.app.use('/private', PrivateAccountController);
+    this.app.use('/public', PublicAccountController);
+    this.app.get('/hoge', (req, res) => res.send('hoge'));
   }
   serverStart() {
     this.app.listen(this.port, () => {

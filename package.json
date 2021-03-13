@@ -6,10 +6,10 @@
   "scripts": {
     "start": "npm run serve",
     "serve": "npm run watch:build && npm run watch:server",
+    "serve:watch": "nodemon ./dist/app.js --watch ./dist",
     "build": "cross-env NODE_ENV=development webpack",
     "build:prod": "cross-env NODE_ENV=production webpack",
-    "watch:build": "cross-env NODE_ENV=development webpack --watch",
-    "watch:server": "nodemon ./dist/app.js --watch ./dist"
+    "build:watch": "cross-env NODE_ENV=development webpack --watch"
   },
   "dependencies": {
     "chalk": "^4.1.0",
