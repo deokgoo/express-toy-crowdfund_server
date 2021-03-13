@@ -1,21 +1,22 @@
 import { Router } from 'express';
+import FirebaseService from '../service/firebase';
 
-let PublicAccountController = Router();
+const PublicAccountController = (firebaseService: FirebaseService) => {
+  let router = Router();
 
-PublicAccountController.use((req, res, next) => {
-  console.log('public controller');
-  next();
-});
+  router.use((req, res, next) => {next();});
 
-PublicAccountController.get('/crowd/:id', async (req, res) => {
-  const { id } = req.params;
-  res.send({
-    [id]: {
-      account: 12345,
-      member: 20,
-      created_at: '2021-03-13 12:23:00',
-    }
+  router.get('/crowd/:fid', async (req, res) => {
+    const { fid } = req.params;
+    const info = await firebaseService.getCrowdFundingById(fid);
+    const participate = await firebaseService.getParticipate(fid);
+    res.send({
+      info,
+      participate,
+    });
   });
-});
+
+  return router;
+}
 
 export default PublicAccountController;
