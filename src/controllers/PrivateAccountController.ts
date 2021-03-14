@@ -5,14 +5,24 @@ const PrivateAccountController = (firebaseService: FirebaseService) => {
   let router = Router();
 
   router.use(async (req, res, next) => {
-    // TODO: Authorization
     const { authorization } = req.headers;
+    const idToken = authorization?.split(' ')[1];
+    if(!idToken) {
+      res.sendStatus(401);
+      return;
+    }
+    try {
+      await firebaseService.verifyIdToken(idToken);
+    } catch(err) {
+      res.sendStatus(401);
+    }
     next();
   });
 
   router.post('/crowd/create', async (req, res) => {
-    // TODO currentUser uid
-    const userId = 'testUid';
+    const { authorization } = req.headers;
+    const idToken = authorization?.split(' ')[1];
+    const userId = await firebaseService.verifyIdToken(idToken!);
     const { title, desc, targetMoney } = req.body;
     if(!title || !desc || !targetMoney) {
       res.sendStatus(400);
@@ -28,15 +38,17 @@ const PrivateAccountController = (firebaseService: FirebaseService) => {
   });
 
   router.get('/crowd', async (req,res) => {
-    // TODO: getUid
-    const uid = 'testUid';
+    const { authorization } = req.headers;
+    const idToken = authorization?.split(' ')[1];
+    const uid = await firebaseService.verifyIdToken(idToken!);
     const data = await firebaseService.getCrowdFunding(uid);
     res.send(data);
   });
 
   router.post('/crowd/deposit', async (req, res) => {
-    // TODO:
-    const userId = 'testUid';
+    const { authorization } = req.headers;
+    const idToken = authorization?.split(' ')[1];
+    const userId = await firebaseService.verifyIdToken(idToken!);
     const { fid, money } = req.body;
 
     try {

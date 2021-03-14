@@ -1,33 +1,34 @@
-import { repoCrowdFundType, depositType } from './type';
-import firebase from 'firebase';
+import { RepoCrowdFundType, DepositType, FirebaseReference, FirebaseAuth } from './type';
+import admin from 'firebase-admin';
 import { uid } from 'uid';
 
-const {
-  API_KEY,
-  AUTH_DOMAIN,
-  DATABASE_URL,
-  STORAGE_BUCKET
-} = process.env;
+const { DATABASE_URL } = process.env;
 
 class FirebaseService {
-  private crowdFundRef: firebase.database.Reference;
-  private participantsRef: firebase.database.Reference;
+  private crowdFundRef: FirebaseReference;
+  private participantsRef: FirebaseReference;
+  private firebaseAuth: FirebaseAuth;
 
   private constructor() {
-    firebase.initializeApp({
-      apiKey: API_KEY,
-      authDomain: AUTH_DOMAIN,
+    const serviceAccount = require("../../serviceAccountKey.json");
+    const firebaseAdmin = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
       databaseURL: DATABASE_URL,
-      storageBucket: STORAGE_BUCKET,
     });
-    const database = firebase.database();
-    this.crowdFundRef = database.ref('crowdFund');
-    this.participantsRef = database.ref('participants')
+    
+    this.crowdFundRef = firebaseAdmin.database().ref('crowdFund');
+    this.participantsRef = firebaseAdmin.database().ref('participants');
+    this.firebaseAuth = firebaseAdmin.auth();
   }
 
   static create() { return new FirebaseService(); }
 
-  async createCrowdFunding({userId, title, desc, targetMoney}: repoCrowdFundType) {
+  async verifyIdToken(idToken: string): Promise<string> {
+    const { uid } = await this.firebaseAuth.verifyIdToken(idToken);
+    return uid;
+  }
+
+  async createCrowdFunding({userId, title, desc, targetMoney}: RepoCrowdFundType) {
     const ref = this.crowdFundRef.child(uid(16));
     await ref.set({
       targetMoney,
@@ -63,7 +64,7 @@ class FirebaseService {
     return Object.keys(data).map(x => data[x]);
   }
 
-  async depositFunding({fid, userId, money}: depositType) {
+  async depositFunding({fid, userId, money}: DepositType) {
     const ref = this.participantsRef.child(fid).child(uid(16));
     await this.getCrowdFundingById(fid);
     await ref.set({

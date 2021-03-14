@@ -6,6 +6,7 @@ import ExpressCore from 'express-serve-static-core';
 import PrivateAccountController from './controllers/PrivateAccountController';
 import PublicAccountController from './controllers/PublicAccountController';
 import FirebaseService from './service/firebase';
+import FirebaseAdmin from './service/firebaseAdmin';
 
 class App {
   private app: ExpressCore.Express;
