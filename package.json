@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "npm run build && npm run serve",
+    "start": "yarn run build && yarn run serve",
     "serve": "nodemon ./dist/app.js",
     "serve:watch": "nodemon ./dist/app.js --watch ./dist",
     "build": "cross-env NODE_ENV=development webpack",
@@ -17,9 +17,7 @@
     "express": "^4.17.1",
     "firebase-admin": "^9.5.0",
     "morgan": "^1.10.0",
-    "uid": "^2.0.0"
-  },
-  "devDependencies": {
+    "uid": "^2.0.0",
     "@babel/core": "^7.13.8",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-transform-runtime": "^7.13.9",
