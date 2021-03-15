@@ -67,6 +67,7 @@ class FirebaseService {
     const ref = this.participantsRef.child(fid);
     const snapshot = await ref.get();
     const data = snapshot.val();
+    if(!data) return [];
     return Object.keys(data).map(x => data[x]);
   }
 
