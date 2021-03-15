@@ -13,6 +13,8 @@ class FirebaseService {
     let serviceAccount = process.env.firebaseConfig;
     if(!serviceAccount) serviceAccount = require("../../serviceAccountKey.json");
     if(!serviceAccount) throw new Error('firebase account key is not defined');
+
+    serviceAccount = JSON.stringify(serviceAccount);
     
     const firebaseAdmin = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
