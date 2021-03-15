@@ -2,7 +2,7 @@ import { RepoCrowdFundType, DepositType, FirebaseReference, FirebaseAuth } from 
 import admin from 'firebase-admin';
 import { uid } from 'uid';
 
-const { DATABASE_URL } = process.env;
+const { FIREBASE_DATABASE } = process.env;
 
 class FirebaseService {
   private crowdFundRef: FirebaseReference;
@@ -10,15 +10,13 @@ class FirebaseService {
   private firebaseAuth: FirebaseAuth;
 
   private constructor() {
-    let serviceAccount = process.env.firebaseConfig;
-    if(!serviceAccount) serviceAccount = require("../../serviceAccountKey.json");
-    if(!serviceAccount) throw new Error('firebase account key is not defined');
-
-    serviceAccount = JSON.stringify(serviceAccount);
+    const { FIREBASE_CONFIG } = process.env
+    if(!FIREBASE_CONFIG) throw new Error('firebase config error');
+    let serviceAccount = JSON.parse(FIREBASE_CONFIG);
     
     const firebaseAdmin = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: DATABASE_URL,
+      databaseURL: FIREBASE_DATABASE,
     });
     
     this.crowdFundRef = firebaseAdmin.database().ref('crowdFund');
