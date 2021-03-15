@@ -10,7 +10,10 @@ class FirebaseService {
   private firebaseAuth: FirebaseAuth;
 
   private constructor() {
-    const serviceAccount = require("../../serviceAccountKey.json");
+    let serviceAccount = process.env.firebaseConfig;
+    if(!serviceAccount) serviceAccount = require("../../serviceAccountKey.json");
+    if(!serviceAccount) throw new Error('firebase account key is not defined');
+    
     const firebaseAdmin = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       databaseURL: DATABASE_URL,
