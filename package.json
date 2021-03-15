@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "echo $firebasConfig > ./serviceAccountKey.json && npm run build && npm run serve",
+    "start": "npm run build && npm run serve",
     "serve": "nodemon ./dist/app.js",
     "serve:watch": "nodemon ./dist/app.js --watch ./dist",
     "build": "cross-env NODE_ENV=development webpack",
