@@ -56,7 +56,10 @@ class FirebaseService {
     const data = snapshot.val();
     const resKeys = Object.keys(data).filter(x => data[x].created_by === userId);
 
-    return resKeys.map(x => data[x]);
+    return resKeys.map(x => ({
+      fid: x,
+      ...(data[x])
+    }));
   }
 
   async getParticipate(fid: string) {
