@@ -16,6 +16,12 @@ const PublicAccountController = (firebaseService: FirebaseService) => {
     });
   });
 
+  router.post('/register', async (req, res) => {
+    const { email, password, name } = req.body;
+    await firebaseService.register({email, password, name})
+    res.sendStatus(201);
+  })
+
   return router;
 }
 

@@ -18,5 +18,11 @@ export type DepositType = {
   money: number,
 }
 
+export type RegisteType = {
+  email: string,
+  password: string,
+  name?: string,
+}
+
 export type FirebaseReference = admin.database.Reference;
 export type FirebaseAuth = admin.auth.Auth

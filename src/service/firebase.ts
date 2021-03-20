@@ -1,4 +1,4 @@
-import { RepoCrowdFundType, DepositType, FirebaseReference, FirebaseAuth } from './type';
+import { RepoCrowdFundType, DepositType, FirebaseReference, FirebaseAuth, RegisteType } from './type';
 import admin from 'firebase-admin';
 import { uid } from 'uid';
 
@@ -79,6 +79,16 @@ class FirebaseService {
       money,
       created_at: new Date().toString(),
     });
+  }
+
+  async register({email, password, name}: RegisteType) {
+    await this.firebaseAuth.createUser({
+      email,
+      emailVerified: false,
+      password,
+      displayName: name,
+      disabled: false,
+    })
   }
 }
 
