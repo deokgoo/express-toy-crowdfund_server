@@ -45,17 +45,26 @@ const PrivateAccountController = (firebaseService: FirebaseService) => {
     res.send(data);
   });
 
+  router.get('/crowd/participate', async (req,res) => {
+    const { authorization } = req.headers;
+    const idToken = authorization?.split(' ')[1];
+    const uid = await firebaseService.verifyIdToken(idToken!);
+    const data = await firebaseService.getCrowdFunding(uid);
+    res.send(data);
+  });
+
   router.post('/crowd/deposit', async (req, res) => {
     const { authorization } = req.headers;
     const idToken = authorization?.split(' ')[1];
     const userId = await firebaseService.verifyIdToken(idToken!);
-    const { fid, money } = req.body;
+    const { fid, money, msg } = req.body;
 
     try {
       await firebaseService.depositFunding({
         fid,
         userId,
         money,
+        msg,
       });
       res.sendStatus(200);
     } catch(err) {

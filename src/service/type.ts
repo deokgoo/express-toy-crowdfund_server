@@ -16,6 +16,7 @@ export type DepositType = {
   fid: string,
   userId: string,
   money: number,
+  msg: string,
 }
 
 export type RegisteType = {

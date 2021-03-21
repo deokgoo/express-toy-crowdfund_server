@@ -62,6 +62,28 @@ class FirebaseService {
     }));
   }
 
+  async getParticipateCrowdFunding(userId: string) {
+    const ref = this.participantsRef;
+    const snapshot = await ref.get();
+    const data = snapshot.val();
+    const fundingArr = [];
+    Object.keys(data).filter(x => {
+      const a = data[x];
+      const keys = Object.keys(a);
+      for(let i = 0;i<keys.length;i++) {
+        if(a[keys[i]].userId === userId) {
+          fundingArr.push(x);
+          break;
+        }
+      }
+    });
+
+    // return resKeys.map(x => ({
+    //   fid: x,
+    //   ...(data[x])
+    // }));
+  }
+
   async getParticipate(fid: string) {
     await this.getCrowdFundingById(fid);
     const ref = this.participantsRef.child(fid);
@@ -71,12 +93,13 @@ class FirebaseService {
     return Object.keys(data).map(x => data[x]);
   }
 
-  async depositFunding({fid, userId, money}: DepositType) {
+  async depositFunding({fid, userId, money, msg}: DepositType) {
     const ref = this.participantsRef.child(fid).child(uid(16));
     await this.getCrowdFundingById(fid);
     await ref.set({
       userId,
       money,
+      msg,
       created_at: new Date().toString(),
     });
   }
