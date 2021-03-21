@@ -98,7 +98,8 @@ class FirebaseService {
     const snapshot = await ref.get();
     const data = snapshot.val();
     if(!data) return [];
-    return Object.keys(data).map(x => data[x]);
+    const participate = Object.keys(data).map(x => data[x]);
+    participate.sort((x, y) => x.created_at > y.created_at ? 1 : 0);
   }
 
   async depositFunding({fid, userId, money, msg}: DepositType) {
