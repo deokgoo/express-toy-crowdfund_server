@@ -7,6 +7,7 @@ const { FIREBASE_DATABASE } = process.env;
 class FirebaseService {
   private crowdFundRef: FirebaseReference;
   private participantsRef: FirebaseReference;
+  private userRef: FirebaseReference;
   private firebaseAuth: FirebaseAuth;
 
   private constructor() {
@@ -21,6 +22,7 @@ class FirebaseService {
     
     this.crowdFundRef = firebaseAdmin.database().ref('crowdFund');
     this.participantsRef = firebaseAdmin.database().ref('participants');
+    this.userRef = firebaseAdmin.database().ref('users');
     this.firebaseAuth = firebaseAdmin.auth();
   }
 
@@ -29,6 +31,12 @@ class FirebaseService {
   async verifyIdToken(idToken: string): Promise<string> {
     const { uid } = await this.firebaseAuth.verifyIdToken(idToken);
     return uid;
+  }
+
+  async getUserInfoFromUid(uid: string) {
+    const ref = this.userRef.child(uid);
+    const snapshot = await ref.get();
+    return snapshot.val();
   }
 
   async createCrowdFunding({userId, title, desc, targetMoney}: RepoCrowdFundType) {
@@ -94,10 +102,12 @@ class FirebaseService {
   }
 
   async depositFunding({fid, userId, money, msg}: DepositType) {
+    const { name } = await this.getUserInfoFromUid(userId);
     const ref = this.participantsRef.child(fid).child(uid(16));
     await this.getCrowdFundingById(fid);
     await ref.set({
       userId,
+      name,
       money,
       msg,
       created_at: new Date().toString(),
@@ -105,12 +115,15 @@ class FirebaseService {
   }
 
   async register({email, password, name}: RegisteType) {
-    await this.firebaseAuth.createUser({
+    const { uid } = await this.firebaseAuth.createUser({
       email,
       emailVerified: false,
       password,
       displayName: name,
       disabled: false,
+    });
+    this.userRef.child(uid).set({
+      name,
     })
   }
 }
