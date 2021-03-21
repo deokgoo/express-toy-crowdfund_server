@@ -102,7 +102,7 @@ class FirebaseService {
     participate.sort((o1,o2) => {
       const a = new Date(o1.created_at).getTime();
       const b = new Date(o2.created_at).getTime();
-      return a - b;
+      return b - a;
     });
     return participate.sort((x, y) => x.created_at > y.created_at ? 1 : 0);
   }
